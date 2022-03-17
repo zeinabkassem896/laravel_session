@@ -47,15 +47,22 @@ class FileController extends Controller
     public function create(Request $request){
 
         $this->validate($request, [
-            'name' => 'required',
             'type' => 'required',
+            'name' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
          ]);
 
+         if ($files = $request->file('name')) {
+            $destinationPath = 'image/'; // upload path
+            $profileImage = date('YmdHis') . "." . $files->getClientOriginalExtension();
+            $files->move($destinationPath, $profileImage);
+        }
+
+
         $new_file = new File;
-        $new_file->name = $request->name;
+        $new_file->name = $profileImage;
         $new_file->type = $request->type;
-        $new_file->extension = $request->extension;
-        $new_file->destination = $request->destination;
+        $new_file->extension = $files->getClientOriginalExtension();
+        $new_file->destination = $destinationPath.$profileImage;
         $new_file->save();
 
         $respond = [

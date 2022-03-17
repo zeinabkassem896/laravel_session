@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -62,12 +63,26 @@ Route::group(['prefix' => 'category'], function()
 });
 
 
-Route::group(['prefix' => 'book'], function()
-{
-    Route::get('/', [BookController::class, 'index']);
-    Route::get('/{id}', [BookController::class, 'get']);
-    Route::post('/create', [BookController::class, 'create']);
-    Route::post('/edit/{id}', [BookController::class, 'update']);
-    Route::delete('/{id}', [BookController::class, 'delete']);
+
+
+
+
+
+Route::post('register', [UserController::class, 'register']);
+Route::post('login', [UserController::class, 'login']);
+Route::get('logout', [UserController::class, 'signout']);
+
+Route::group(['middleware' => ['jwt.verify']], function() {
+    Route::group(['prefix' => 'book'], function()
+    {
+        Route::get('/', [BookController::class, 'index']);
+        Route::get('/{id}', [BookController::class, 'get']);
+        Route::post('/create', [BookController::class, 'create']);
+        Route::post('/edit/{id}', [BookController::class, 'update']);
+        Route::delete('/{id}', [BookController::class, 'delete']);
+
+    });
 
 });
+
+
